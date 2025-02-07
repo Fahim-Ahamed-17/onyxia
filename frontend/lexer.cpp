@@ -3,39 +3,11 @@
 #include <vector>
 #include <cctype>
 #include <algorithm>
+#include "lexer.h"
 
 using namespace std;
 
-enum class TokenType{
-    Bin_op,
-    Equals,
-    Open_paren,
-    Close_paren,
-    DataType,
-    KeyWords,
-    Identifiers,
-    Number,
-    Boolean,
-    String,
-    SemiColon,
-    Colon,
-    OpenBrace,
-    CloseBrace,
-    QuestionMark,
-    DoubleQuotes,
-    Logical_Op,
-    End_of_file,    
-};
-
-enum class KeywordType{
-    var_kw,
-    const_kw,
-    if_kw,
-};
-
-class Token{
-    private:
-        static string isKeyword(string word){
+        string Token::isKeyword(string word){
             int number_of_keywords = 6;
             string reserved_KeyWords[] = {"if","let","var","else","while","break"};// change the number
             for(int i = 0;i < number_of_keywords;i++){
@@ -47,7 +19,7 @@ class Token{
         }
 
 
-        static string isDataType(string word){
+        string Token::isDataType(string word){
             int number_of_DataType = 3;
             string datatypes[] = {"Number","Boolean","String","Null"};
             for(int i = 0;i < number_of_DataType;i++){
@@ -59,13 +31,13 @@ class Token{
         }
 
 
-        static bool isNumber(const std::string& word) {
+        bool Token::isNumber(const std::string& word) {
             if(word.empty()) return false;
             int start = (word[0] == '-' || word[0] == '+') ? 1:0;
             return start < word.length() && std::all_of(word.begin()+start,word.end(),::isdigit);
         }
 
-        static string getTheString(const std::string& word,int& position){
+        string Token::getTheString(const std::string& word,int& position){
             string sentence = "";
             while (position < word.length()-1 && word[position] != '"') {
                 sentence.push_back(word[position]);
@@ -75,20 +47,16 @@ class Token{
             return sentence;
         }   
 
-
-    public :
-        TokenType type;
-        string value;
-        Token(TokenType t,string data){
-            type = t;
-            value = data;
-        }
-        
-        Token(){
+        Token::Token(){
             value = "";
         }
 
-        static Token createToken(string  source  ,int& position){
+        Token::Token(TokenType type_,string value_){
+            type = type_;
+            value = value_; 
+        }
+
+        Token Token::createToken(string  source  ,int& position){
             while(source[position] == ' ' && position < source.length()-1){
                 position++;
             }
@@ -184,7 +152,7 @@ class Token{
             return newToken;
         }
 
-        static string toString(TokenType type) {
+         string Token::toString(TokenType type) {
             switch (type) {
                     case TokenType::Bin_op: return "Bin_op";
                     case TokenType::Open_paren: return "Open_paren";
@@ -204,14 +172,15 @@ class Token{
                 }
         }
 
-        static void printTokens(vector<Token> tokens){
+        void Token::printToken(vector<Token> tokens){
             cout << "--------" << endl;
             for(int i = 0; i< tokens.size();i++){
                cout << " TokenType : " << left << setw(15)<< Token::toString(tokens[i].type) << "| value : " << tokens[i].value << endl;
             }
         }
 
-        static vector<Token>* Tokenize(string& source){
+        vector<Token>* Token::Tokenize(string& source){
+  
             source.push_back(' ');
             vector<Token>* tokens = new vector<Token>();
             int i = 0;
@@ -224,7 +193,6 @@ class Token{
             }
             return tokens;
         }
-};
 
 
 // int main(){

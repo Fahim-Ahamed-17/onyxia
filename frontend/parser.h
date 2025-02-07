@@ -4,7 +4,7 @@
 #include "ast.h"
 #include <iostream>
 #include <vector>
-#include "lexer.cpp"
+#include "lexer.h"
 
 class Parser{
     private :
