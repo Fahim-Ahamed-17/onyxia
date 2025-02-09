@@ -215,16 +215,15 @@ Statement* Parser::parse_break_keyword(){
 
 Expression* Parser::parse_expression(){
     // cout << "expr parsed" << endl;
-    return this->parse_logical_expression();
+    return this->parse_conditional_expression();
 }
 
-Expression* Parser::parse_logical_expression(){
+Expression* Parser::parse_conditional_expression(){
     Expression* left = parse_additive_expression();
-    LogicalExpression* logical_expression;
     while(at().value=="<"||at().value=="<="||at().value==">"||at().value==">="||at().value=="=="){
         string logical_operator = eat().value;
         Expression* right = parse_additive_expression();
-        left = new LogicalExpression(left,right,logical_operator);
+        left = new ConditionalExpression(left,right,logical_operator);
     }
     return left;
 }

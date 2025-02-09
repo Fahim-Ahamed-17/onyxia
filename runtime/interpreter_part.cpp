@@ -41,8 +41,8 @@ namespace interpreter_functions{
             return evaluate_identifier(ast_node,env);
         case ast_types::NodeType::Binary_Expression :
             return eval_binary_expr(ast_node,env);
-        case ast_types::NodeType::Logical_Expression:
-            return eval_logical_expr(ast_node,env);
+        case ast_types::NodeType::Conditional_Expression :
+            return eval_conditional_expr(ast_node,env);
         case ast_types::NodeType::Variable_Declaration:
             return eval_variable_declaration(ast_node,env);
         case ast_types::NodeType::Variable_Assignment:
@@ -106,38 +106,36 @@ namespace interpreter_functions{
         }
     }
 
-    values::RuntimeValue* eval_logical_expr(ast_types::Statement* ast_node,environment::Environment* env){
-
-        LogicalExpression* logical_expr_node = dynamic_cast<LogicalExpression*>(ast_node);
-        values::RuntimeValue* left_expr_result = evaluate(logical_expr_node->left,env);
-        values::RuntimeValue* right_expr_result = evaluate(logical_expr_node->right,env);
-        if(left_expr_result->kind == values::ValueType::Number && right_expr_result->kind==values::ValueType::Number){
-            return eval_numeric_logical_expr(left_expr_result,right_expr_result,logical_expr_node->logical_operator);
-        }else{
-            throw std::runtime_error("the operand is not defined for this type");
-        } 
+    values::RuntimeValue* eval_conditional_expr(ast_types::Statement* ast_node,environment::Environment* env){
+      ConditionalExpression* logical_expr_node = dynamic_cast<ConditionalExpression*>(ast_node);
+      values::RuntimeValue* left_expr_result = evaluate(logical_expr_node->left,env);
+      values::RuntimeValue* right_expr_result = evaluate(logical_expr_node->right,env);
+      if(left_expr_result->kind == values::ValueType::Number && right_expr_result->kind==values::ValueType::Number){
+        return eval_numeric_conditional_expr(left_expr_result,right_expr_result,logical_expr_node->conditional_operator);
+      }else{
+        throw std::runtime_error("the operand is not defined for this type");
+      } 
     }
 
-    values::RuntimeValue* eval_numeric_logical_expr(values::RuntimeValue* left,values::RuntimeValue* right,string logical_op){
-    values::NumberValue* left_number  = dynamic_cast<values::NumberValue*>(left);
-    values::NumberValue* right_number = dynamic_cast<values::NumberValue*>(right);
+    values::RuntimeValue* eval_numeric_conditional_expr(values::RuntimeValue* left,values::RuntimeValue* right,string logical_op){
+      values::NumberValue* left_number  = dynamic_cast<values::NumberValue*>(left);
+      values::NumberValue* right_number = dynamic_cast<values::NumberValue*>(right);
     
-    if(logical_op == "<"){
+      if(logical_op == "<"){
         if(left_number->value < right_number->value) return new values::BooleanValue(true);
-    }else if(logical_op == "<="){
+      }else if(logical_op == "<="){
         if(left_number->value <= right_number->value) return new values::BooleanValue(true);
-    }else if(logical_op == ">"){
+      }else if(logical_op == ">"){
         if(left_number->value > right_number->value) return new values::BooleanValue(true);
-    }else if(logical_op == ">="){
+      }else if(logical_op == ">="){
         if(left_number->value >= right_number->value) return new values::BooleanValue(true);
-    }else if(logical_op == "=="){
+      }else if(logical_op == "=="){
         if(left_number->value == right_number->value) return new values::BooleanValue(true);
-    }
-    else{
-        throw std::runtime_error("'" + logical_op + "' is not defined .");
-        
-    }
-    return new values::BooleanValue(false);// this may not be good in the future but idk and idc
+      }
+      else{
+        throw std::runtime_error("'" + logical_op + "' is not defined ."); 
+      }
+      return new values::BooleanValue(false);// this may not be good in the future but idk and idc
 }
   
     values::RuntimeValue* evaluate_identifier(ast_types::Statement* ast_node,environment::Environment* env){
