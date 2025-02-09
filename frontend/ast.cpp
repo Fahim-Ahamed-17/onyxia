@@ -58,25 +58,25 @@ namespace ast_types{
     }
 
 
-    LogicalExpression::LogicalExpression(
+    ConditionalExpression::ConditionalExpression(
         Expression* left_exp,
         Expression* right_exp,
-        string logical_op
+        string conditional_op
     ){
         left = left_exp;
         right = right_exp;
-        logical_operator = logical_op;
-        setNodeType(NodeType::Logical_Expression);
+        conditional_operator = conditional_op;
+        setNodeType(NodeType::Conditional_Expression);
     }
 
-    void LogicalExpression::printNode(int i){
-        cout << "Logical Expression : " <<endl;
+    void ConditionalExpression::printNode(int i){
+        cout << "Conditional Expression : " <<endl;
         Statement::indent(i);
         cout << "Left  : " ;left->printNode(i+1);
         Statement::indent(i);
         cout << "Right : " ;right->printNode(i+1);
         Statement::indent(i);
-        cout << "operator : " << logical_operator << endl; 
+        cout << "operator : " << conditional_operator << endl; 
     }
 
     NumericLiteral::NumericLiteral(string num){

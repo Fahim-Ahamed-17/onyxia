@@ -29,7 +29,7 @@ class Parser{
         ast_types::Expression* parse_primary_expression();
         ast_types::Expression* parse_additive_expression();
         ast_types::Expression* parse_multiplicative_expression();
-        ast_types::Expression* parse_logical_expression();        
+        ast_types::Expression* parse_conditional_expression();        
 };
 
 #endif 
