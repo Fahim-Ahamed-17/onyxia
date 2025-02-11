@@ -33,8 +33,9 @@ namespace ast_types{
         for(int i = 0;i < body.size();i++){
             body[i]->printNode(i+1);
         }   
-    }
+    }  
 
+    values::RuntimeValue* Program::evaluate_node(environment::Environment* env){}
 
     BinaryExpression::BinaryExpression(
         Expression* left_exp,
@@ -57,7 +58,8 @@ namespace ast_types{
         cout << "operator : " << binary_operator << endl; 
     }
 
-
+    values::RuntimeValue* BinaryExpression::evaluate_node(environment::Environment* env){}
+        
     ConditionalExpression::ConditionalExpression(
         Expression* left_exp,
         Expression* right_exp,
@@ -79,6 +81,8 @@ namespace ast_types{
         cout << "operator : " << conditional_operator << endl; 
     }
 
+    values::RuntimeValue* ConditionalExpression::evaluate_node(environment::Environment* env){}
+
     NumericLiteral::NumericLiteral(string num){
         value = stoi(num);
         setNodeType(NodeType::NumericLiteral);
@@ -89,6 +93,8 @@ namespace ast_types{
         Statement::indent(i);
         cout << "value : " << fixed << setprecision(3) << value << endl;
     }
+
+    values::RuntimeValue* NumericLiteral::evaluate_node(environment::Environment* env){}
 
     BooleanLiteral::BooleanLiteral(string data){
         if(data == "true") value = true;
@@ -101,11 +107,12 @@ namespace ast_types{
         Statement::indent(i);
         cout << "flag : " << value << endl;
     }
+    values::RuntimeValue* BooleanLiteral::evaluate_node(environment::Environment* env){}
+    
     StringLiteral::StringLiteral(string word){
         value = word;
         setNodeType(NodeType::StringLiteral);
     }
-
 
     void StringLiteral::printNode(int i) {
         cout << "StringLiteral : " << endl;
@@ -114,6 +121,8 @@ namespace ast_types{
     }
 
 
+    values::RuntimeValue* StringLiteral::evaluate_node(environment::Environment* env){}
+    
     Identifier::Identifier(string value){
         symbol = value;
         setNodeType(NodeType::Identifier);
@@ -124,7 +133,9 @@ namespace ast_types{
         Statement::indent(i);
         cout << "value : " << symbol << endl;
     }
-
+  
+    values::RuntimeValue* Identifier::evaluate_node(environment::Environment* env){}
+  
     void yoyo(){
         cout << "heloo dude"<< endl;
     }
@@ -160,6 +171,8 @@ namespace ast_types{
         
     }
 
+    values::RuntimeValue* Variable_Declaration::evaluate_node(environment::Environment* env){}
+
     Variable_Assignment::Variable_Assignment(Identifier* name,Expression* expr,DataTypes type){
         varName = name;
         expression = expr;
@@ -176,12 +189,15 @@ namespace ast_types{
         expression->printNode(i+1);
     }
 
-     If_Statement::If_Statement(Expression* expr,vector<Statement*> body,Statement* other_if_ptr){
+    values::RuntimeValue* Variable_Assignment::evaluate_node(environment::Environment* env){}
+     
+    If_Statement::If_Statement(Expression* expr,vector<Statement*> body,Statement* other_if_ptr){
         condition_expr = expr;
         if_body = body;
         other_if = other_if_ptr;
         setNodeType(NodeType::If_Statement);
     }
+
     void If_Statement::printNode(int i){
         Statement::indent(i);
         cout << "If Statement : " << endl;
@@ -203,6 +219,8 @@ namespace ast_types{
         } 
     }
     
+    values::RuntimeValue* If_Statement::evaluate_node(environment::Environment* env){}
+    
     While_Loop::While_Loop(Expression* expr,vector<Statement*> body){
         condition_expr = expr;
         while_loop_body = body;
@@ -222,6 +240,7 @@ namespace ast_types{
         }
     }
 
+    values::RuntimeValue* While_Loop::evaluate_node(environment::Environment* env){}
 
     Null_Interrupt::Null_Interrupt(){
         setNodeType(NodeType::Null_Interrupt);
@@ -232,6 +251,8 @@ namespace ast_types{
     }     
 
 
+    values::RuntimeValue* Null_Interrupt::evaluate_node(environment::Environment* env){}
+    
     Break_keyWord::Break_keyWord(){
         setNodeType(NodeType::Break_Interrupt);
     }
@@ -240,6 +261,6 @@ namespace ast_types{
         cout << "< Break KeyWord >" << endl; 
     }     
 
-
+    values::RuntimeValue* Break_keyWord::evaluate_node(environment::Environment* env){}
 
 }

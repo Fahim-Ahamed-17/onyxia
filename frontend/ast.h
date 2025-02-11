@@ -5,6 +5,7 @@
 #include<vector>
 #include<iostream>
 #include "../runtime/values.h"
+#include "../runtime/environment.h"
 
 using namespace std;
 
@@ -51,7 +52,7 @@ namespace ast_types{
             cout << "  " ;
           }
         }
-        virtual values::RuntimeValue* evaluate_node();
+        virtual values::RuntimeValue* evaluate_node(environment::Environment* env);
         virtual ~Statement(){}
     };
 
@@ -59,7 +60,7 @@ namespace ast_types{
       public :
         virtual void dummy2(){};
         virtual void printNode(int i){};
-        virtual values::RuntimeValue* evaluate_node();
+        virtual values::RuntimeValue* evaluate_node(environment::Environment* env);
         virtual ~Expression(){}
             
     };
@@ -70,7 +71,7 @@ namespace ast_types{
         Program();
         vector<Statement*> body;
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
     };
 
     class BinaryExpression : public Expression{
@@ -85,7 +86,7 @@ namespace ast_types{
           string binary_operator
         );
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
    };
 
 
@@ -103,7 +104,7 @@ namespace ast_types{
         );
 
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
    };
 
     class NumericLiteral : public Expression{
@@ -111,7 +112,7 @@ namespace ast_types{
         float value;
         NumericLiteral(string number);
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
 
     };
 
@@ -120,7 +121,7 @@ namespace ast_types{
         bool value;
         BooleanLiteral(string data);
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
     };
 
     class StringLiteral :public Expression{
@@ -128,7 +129,7 @@ namespace ast_types{
         string value;
         StringLiteral(string literal);
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
     };
 
 
@@ -137,7 +138,7 @@ namespace ast_types{
         string symbol;
         Identifier(string value);
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
     };
 
 
@@ -152,7 +153,7 @@ namespace ast_types{
         values::ValueType runtime_value;
         bool nullable;
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
     };
 
     class Variable_Assignment : public Statement{
@@ -161,7 +162,7 @@ namespace ast_types{
         Identifier* varName;
         Expression* expression;
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
     };
 
     class If_Statement : public Statement{
@@ -172,7 +173,7 @@ namespace ast_types{
         vector<Statement*> if_body;
         Statement* other_if = nullptr;
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
     };
 
   
@@ -182,7 +183,7 @@ namespace ast_types{
         Expression* condition_expr;
         vector<Statement*> while_loop_body;
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
     };
     
     //this class acts as the placeholder for statements like break,return,continue
@@ -190,7 +191,7 @@ namespace ast_types{
       public : 
         Null_Interrupt();
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override; 
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override; 
     };  
 
 
@@ -198,7 +199,7 @@ namespace ast_types{
       public :
         Break_keyWord();
         void printNode(int i) override;
-        values::RuntimeValue* evaluate_node() override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
 
     }; 
 
