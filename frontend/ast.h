@@ -52,7 +52,7 @@ namespace ast_types{
             cout << "  " ;
           }
         }
-        virtual values::RuntimeValue* evaluate_node(environment::Environment* env);
+        virtual values::RuntimeValue* evaluate_node(environment::Environment* env){};
         virtual ~Statement(){}
     };
 
@@ -60,7 +60,6 @@ namespace ast_types{
       public :
         virtual void dummy2(){};
         virtual void printNode(int i){};
-        virtual values::RuntimeValue* evaluate_node(environment::Environment* env);
         virtual ~Expression(){}
             
     };
