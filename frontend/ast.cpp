@@ -90,6 +90,31 @@ namespace ast_types{
     return interpreter_functions::eval_conditional_expr(this,env);
   }
 
+
+  LogicalExpression::LogicalExpression(
+    Expression* left_exp,
+    Expression* right_exp,
+    string logical_op
+  ){
+    left = left_exp;
+    right = right_exp;
+    logical_operator = logical_op;
+    setNodeType(NodeType::Logical_Expression);
+    }
+
+  void LogicalExpression::printNode(int i){
+    cout << "Logical Expression : " <<endl;
+    Statement::indent(i);
+    cout << "Left  : " ;left->printNode(i+1);
+    Statement::indent(i);
+    cout << "Right : " ;right->printNode(i+1);
+    Statement::indent(i);
+    cout << "operator : " << logical_operator << endl; 
+  }
+
+  values::RuntimeValue* LogicalExpression::evaluate_node(environment::Environment* env){
+    return new values::NullValue();
+  }
   NumericLiteral::NumericLiteral(string num){
     value = stoi(num);
     setNodeType(NodeType::NumericLiteral);
