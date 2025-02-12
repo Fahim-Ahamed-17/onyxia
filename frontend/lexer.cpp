@@ -7,7 +7,7 @@
 
 using namespace std;
 
-  string Token::isKeyword(string word){
+  string Token::isKeyword(string word){ 
     int number_of_keywords = 6;
     string reserved_KeyWords[] = {"if","let","var","else","while","break"};// change the number
     for(int i = 0;i < number_of_keywords;i++){
@@ -113,6 +113,27 @@ using namespace std;
       case '"':
         sentence = getTheString(source,position);
         newToken = Token(TokenType::String,sentence);
+        break;
+      case '&':
+        if(source[position] == '&'){
+          position++;
+          newToken = Token(TokenType::Logical_Op,"&&");
+          break;
+        }else{
+          newToken = Token(TokenType::Unary_Op,"&");
+          break;
+        }
+      case '|':
+        if(source[position] == '|'){
+          position++;
+          newToken = Token(TokenType::Logical_Op,"||");
+          break;
+        }else{
+          newToken = Token(TokenType::Unary_Op,"|");
+          break;
+        }
+      case '!':
+        newToken = Token(TokenType::Logical_Op,"!");
         break;
       default:
         break;
