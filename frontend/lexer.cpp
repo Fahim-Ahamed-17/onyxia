@@ -86,25 +86,25 @@ using namespace std;
       case '<':
         if(source[position] == '='){
           position++;
-          newToken = Token(TokenType::Logical_Op,"<=");
+          newToken = Token(TokenType::Conditional_Op,"<=");
           break;
         }else{
-          newToken = Token(TokenType::Logical_Op,"<");
+          newToken = Token(TokenType::Conditional_Op,"<");
           break;
         }
       case '>':
         if(source[position] == '='){
           position++;
-          newToken = Token(TokenType::Logical_Op,">=");
+          newToken = Token(TokenType::Conditional_Op,">=");
           break;
         }else{
-          newToken = Token(TokenType::Logical_Op,">");
+          newToken = Token(TokenType::Conditional_Op,">");
           break;
         }
       case '=':
         if(source[position] == '='){
           position++;
-          newToken = Token(TokenType::Logical_Op,"==");
+          newToken = Token(TokenType::Conditional_Op,"==");
           break;
         }else{
           newToken = Token(TokenType::Equals,"=");
@@ -154,6 +154,7 @@ using namespace std;
   string Token::toString(TokenType type) {
     switch (type) {
       case TokenType::Bin_op: return "Bin_op";
+      case TokenType::Conditional_Op : return "Conditional_Op";
       case TokenType::Open_paren: return "Open_paren";
       case TokenType::Close_paren: return "Close_paren";
       case TokenType::KeyWords: return "KeyWords";
@@ -164,7 +165,6 @@ using namespace std;
       case TokenType::End_of_file: return "End_of_file";
       case TokenType::OpenBrace: return "Open_Brace";
       case TokenType::CloseBrace: return "CloseBrace";
-      case TokenType::Logical_Op: return "Logical op";
       case TokenType::SemiColon: return "SemiColon";
       case TokenType::Colon : return "Colon";
       default: return "Unknown";
