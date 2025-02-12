@@ -46,7 +46,7 @@ int fullVersion() {
   for(int i = 0;i<program.body.size();i++){
     program.body[i]->printNode(1);
   }
-  result = interpreter_functions::evaluate(&program,env);
+  result = (&program)->evaluate_node(env);
   result->printValue();
   source_file.close();
   return 0;
@@ -72,7 +72,7 @@ int repl(){
         parser.first_pass();
         program = parser.produceAST(text);
         program.printNode(0);
-        values::RuntimeValue* result = interpreter_functions::evaluate(&program,env);
+        values::RuntimeValue* result = (&program)->evaluate_node(env);
         result->printValue();
     }
     

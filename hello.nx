@@ -1,17 +1,11 @@
 var x:Number? = 1;
 var y:Boolean = true;
 while(true){
-if( 9 >  10){
-  x = 99;
-  break;
-}else{
-  if(y){
-    x = 11;
+  x = x + 1;
+  if(x == 10){
     break;
-  }else{
-    break;
+  }else if(x == 5){
+    y = false;
   }
-}
-break;
 }
 x

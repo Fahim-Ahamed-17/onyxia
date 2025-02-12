@@ -7,7 +7,7 @@
 
 namespace interpreter_functions
 {
-    values::RuntimeValue* evaluate(ast_types::Statement* ast_node,environment::Environment* env);
+//    values::RuntimeValue* evaluate(ast_types::Statement* ast_node,environment::Environment* env);
     values::RuntimeValue* evaluate_program(ast_types::Statement* stmt,environment::Environment* env);
     values::RuntimeValue* eval_binary_expr(ast_types::Statement* ast_node,environment::Environment* env);
     values::RuntimeValue* eval_number_binary_expr(values::NumberValue* rhs,values::NumberValue* lhs,string bin_op);
