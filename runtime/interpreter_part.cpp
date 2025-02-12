@@ -4,7 +4,6 @@
 #include "interpreter_part.h"
 #include <iostream>
 #include <algorithm>
-#include <memory>
 #include <stdexcept>
 #include <string>
 
@@ -13,60 +12,19 @@ using namespace std;
 
 namespace interpreter_functions{
 
-    values::RuntimeValue* evaluate(ast_types::Statement* ast_node,environment::Environment* env){
-        int int_value;
-        ast_types::NumericLiteral* numeric_literal_ptr;
-        bool bool_value;
-        ast_types::BooleanLiteral* boolean_literal_ptr;
-        string string_value;
-        ast_types::StringLiteral* string_literal_ptr;
-        string identifier_value;
-        ast_types::Identifier* Identifier_ptr;
-        switch ((*ast_node).type){
-        case ast_types::NodeType::NumericLiteral :
-            numeric_literal_ptr= dynamic_cast<ast_types::NumericLiteral*>(ast_node);
-            int_value = numeric_literal_ptr->value;
-            return new values::NumberValue(int_value);
-        case ast_types::NodeType::StringLiteral  :
-            string_literal_ptr= dynamic_cast<ast_types::StringLiteral*>(ast_node);
-            string_value = string_literal_ptr->value;
-            return new values::StringValue(string_value);
-        case ast_types::NodeType::BooleanLiteral :
-            boolean_literal_ptr= dynamic_cast<ast_types::BooleanLiteral*>(ast_node);
-            bool_value = boolean_literal_ptr->value;
-            return new values::BooleanValue(bool_value);
-        case ast_types::NodeType::Identifier :
-            Identifier_ptr = dynamic_cast<Identifier*>(ast_node);
-            if(Identifier_ptr->symbol == "null"){return new values::NullValue();}
-            return evaluate_identifier(ast_node,env);
-        case ast_types::NodeType::Binary_Expression :
-            return eval_binary_expr(ast_node,env);
-        case ast_types::NodeType::Conditional_Expression :
-            return eval_conditional_expr(ast_node,env);
-        case ast_types::NodeType::Variable_Declaration:
-            return eval_variable_declaration(ast_node,env);
-        case ast_types::NodeType::Variable_Assignment:
-            return eval_variable_assignment(ast_node,env);
-        case ast_types::NodeType::If_Statement:
-            return eval_if_statement(ast_node,env);
-        case ast_types::NodeType::While_Loop:
-            eval_while_loop(ast_node, env);
-            return new values::NullValue();
-        case ast_types::NodeType::Program :
-            return evaluate_program(ast_node,env);
-        default:
-            throw runtime_error("This ast node is not implemented yet : " + ast_types::toString((*ast_node).type));
-        }
-    }
+//    values::RuntimeValue* evaluate(ast_types::Statement* ast_node,environment::Environment* env){
+  //    return new values::NullValue(); 
+    //}
 
-    values::RuntimeValue* evaluate_program(ast_types::Statement* stmt,environment::Environment* env){
-        ast_types::Program* program = dynamic_cast<ast_types::Program*>(stmt); 
-        values::RuntimeValue* lastEvaluated = new values::NumberValue(-1);
-        for(int i =0;i< (*program).body.size() ;i++){
-            lastEvaluated = evaluate((*program).body[i],env);
-        }
-        return lastEvaluated;
-    }
+  values::RuntimeValue* evaluate_program(ast_types::Statement* stmt,environment::Environment* env){
+    ast_types::Program* program = dynamic_cast<ast_types::Program*>(stmt); 
+    values::RuntimeValue* lastEvaluated = new values::NumberValue(-1);
+    for(int i =0;i< (*program).body.size() ;i++){
+      //lastEvaluated = evaluate((*program).body[i],env);
+      lastEvaluated = program->body[i]->evaluate_node(env);    
+      }
+    return lastEvaluated;
+  }
 
     values::RuntimeValue* eval_number_binary_expr(values::NumberValue* rhs,values::NumberValue* lhs,string bin_op){
         float data;
@@ -91,8 +49,8 @@ namespace interpreter_functions{
         values::NumberValue* left_number_value ; 
         values::NumberValue* right_number_value;
         ast_types::BinaryExpression* bin_expr_ptr = dynamic_cast<ast_types::BinaryExpression*>(ast_node); 
-        values::RuntimeValue* left_side = evaluate(bin_expr_ptr->left,env);
-        values::RuntimeValue* right_side = evaluate(bin_expr_ptr->right,env);
+        values::RuntimeValue* left_side = bin_expr_ptr->left->evaluate_node(env);
+        values::RuntimeValue* right_side = bin_expr_ptr->right->evaluate_node(env);
         if(left_side->kind == values::ValueType::Number && right_side->kind == values::ValueType::Number){
             left_number_value = dynamic_cast<values::NumberValue*>(left_side); 
             right_number_value = dynamic_cast<values::NumberValue*>(right_side); 
@@ -107,11 +65,11 @@ namespace interpreter_functions{
     }
 
     values::RuntimeValue* eval_conditional_expr(ast_types::Statement* ast_node,environment::Environment* env){
-      ConditionalExpression* logical_expr_node = dynamic_cast<ConditionalExpression*>(ast_node);
-      values::RuntimeValue* left_expr_result = evaluate(logical_expr_node->left,env);
-      values::RuntimeValue* right_expr_result = evaluate(logical_expr_node->right,env);
+      ConditionalExpression* conditional_expr_node = dynamic_cast<ConditionalExpression*>(ast_node);
+      values::RuntimeValue* left_expr_result = conditional_expr_node->left->evaluate_node(env);
+      values::RuntimeValue* right_expr_result = conditional_expr_node->right->evaluate_node(env);
       if(left_expr_result->kind == values::ValueType::Number && right_expr_result->kind==values::ValueType::Number){
-        return eval_numeric_conditional_expr(left_expr_result,right_expr_result,logical_expr_node->conditional_operator);
+        return eval_numeric_conditional_expr(left_expr_result,right_expr_result,conditional_expr_node->conditional_operator);
       }else{
         throw std::runtime_error("the operand is not defined for this type");
       } 
@@ -149,20 +107,20 @@ namespace interpreter_functions{
 
     values::RuntimeValue* eval_variable_declaration(ast_types::Statement* ast_node,environment::Environment* env){
         ast_types::Variable_Declaration* varDecPtr = dynamic_cast<ast_types::Variable_Declaration*>(ast_node);
-        values::RuntimeValue* exprResult = evaluate(varDecPtr->expression,env);
+        values::RuntimeValue* exprResult = varDecPtr->expression->evaluate_node(env);
         if(exprResult->kind == values::ValueType::Null && !varDecPtr->nullable) throw runtime_error("'"+varDecPtr->varName->symbol+"' is not Nullable make it explicitly nullable" );
         if(exprResult->kind != varDecPtr->runtime_value && !varDecPtr->nullable) throw  runtime_error("assignment of non compatible types expected "+values::tostring(varDecPtr->runtime_value) +" got : "+values::tostring(exprResult->kind));
-        return env->declare_variable(varDecPtr->varName->symbol,evaluate(varDecPtr->expression,env),varDecPtr->nullable);
+        return env->declare_variable(varDecPtr->varName->symbol,varDecPtr->expression->evaluate_node(env),varDecPtr->nullable);
     };
 
 
 values::RuntimeValue* eval_variable_assignment(ast_types::Statement* ast_node,environment::Environment* env){
   ast_types::Variable_Assignment* varDecPtr = dynamic_cast<ast_types::Variable_Assignment*>(ast_node);
-        values::RuntimeValue* exprResult = evaluate(varDecPtr->expression,env);
+        values::RuntimeValue* exprResult = varDecPtr->expression->evaluate_node(env);
         if(find(env->nullableVariables.begin(),env->nullableVariables.end(),varDecPtr->varName->symbol) == env->nullableVariables.end() && (exprResult->kind == values::ValueType::Null) ){
             throw runtime_error("'"+varDecPtr->varName->symbol+"' is not Nullable make it explicitly nullable");
         }
-        return env->assign_variable(varDecPtr->varName->symbol,evaluate(varDecPtr->expression,env));
+        return env->assign_variable(varDecPtr->varName->symbol,varDecPtr->expression->evaluate_node(env));
 }
 
 
@@ -174,7 +132,7 @@ values::RuntimeValue* eval_if_statement(ast_types::Statement *ast_node,environme
       if(if_node->condition_expr == nullptr){
           for(int j = 0;j<if_node->if_body.size();j++){
               if(if_node->if_body[j]->type == NodeType::Break_Interrupt) return new values::Break_Interrupt_Value();
-              values::RuntimeValue* value = evaluate(if_node->if_body.at(j),curr_env);
+              values::RuntimeValue* value = if_node->if_body.at(j)->evaluate_node(curr_env);
               if(value->kind == values::ValueType::Break_Interrupt_value) return new values::Break_Interrupt_Value();
                // debug this line it returns for all the values 
           }
@@ -190,7 +148,7 @@ values::RuntimeValue* eval_if_statement(ast_types::Statement *ast_node,environme
     
       for(int j = 0;j<if_node->if_body.size();j++){
           if(if_node->if_body[j]->type == NodeType::Break_Interrupt) return new values::Break_Interrupt_Value();
-          values::RuntimeValue* value =  evaluate(if_node->if_body.at(j),curr_env);
+          values::RuntimeValue* value =  if_node->if_body.at(j)->evaluate_node(curr_env);
           if(value->kind == values::ValueType::Break_Interrupt_value) return new values::Break_Interrupt_Value();
       }
 
@@ -211,7 +169,7 @@ void eval_while_loop(ast_types::Statement* ast_node, environment::Environment *e
                     isRunning = false;
                     break;
                 }
-                values::RuntimeValue* stmt_result = evaluate(curr_stmt,env);
+                values::RuntimeValue* stmt_result = curr_stmt->evaluate_node(env);
                 if(stmt_result->kind == values::ValueType::Break_Interrupt_value){
                     isRunning = false;
                     break;
@@ -225,7 +183,7 @@ void eval_while_loop(ast_types::Statement* ast_node, environment::Environment *e
 
 bool evaluate_truthy(Expression* expression,environment::Environment* env){
     
-      values::RuntimeValue* condition_result = evaluate(expression,env);
+      values::RuntimeValue* condition_result = expression->evaluate_node(env);
       values::BooleanValue* boolean_value_ptr;
       values::NumberValue* numeric_value_ptr;
       if(condition_result->kind == values::ValueType::Boolean){
