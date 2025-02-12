@@ -52,7 +52,9 @@ namespace ast_types{
             cout << "  " ;
           }
         }
-        virtual values::RuntimeValue* evaluate_node(environment::Environment* env){};
+        virtual values::RuntimeValue* evaluate_node(environment::Environment* env){
+    return new values::NullValue();
+  };
         virtual ~Statement(){}
     };
 
