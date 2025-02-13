@@ -1,6 +1,7 @@
 #ifndef AST_H
 #define AST_H
 
+#include <stdexcept>
 #include<string>
 #include<vector>
 #include<iostream>
@@ -20,6 +21,7 @@ namespace ast_types{
         Identifier,
         Binary_Expression,
         Conditional_Expression,
+        Logical_Expression,
         Variable_Declaration,
         Variable_Assignment,
         If_Statement,
@@ -53,7 +55,7 @@ namespace ast_types{
           }
         }
         virtual values::RuntimeValue* evaluate_node(environment::Environment* env){
-    return new values::NullValue();
+    throw std::runtime_error("this Node hasnt been implemented" );
   };
         virtual ~Statement(){}
     };
@@ -102,6 +104,22 @@ namespace ast_types{
           Expression* left,
           Expression* right,
           string conditional_operator
+        );
+
+        void printNode(int i) override;
+        values::RuntimeValue* evaluate_node(environment::Environment* env) override;
+   };
+
+    class LogicalExpression : public Expression{
+      public :
+        Expression* left;
+        Expression* right;
+        string logical_operator;
+
+        LogicalExpression(
+          Expression* left,
+          Expression* right,
+          string logical_operator
         );
 
         void printNode(int i) override;

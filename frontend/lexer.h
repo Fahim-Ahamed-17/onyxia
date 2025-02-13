@@ -20,7 +20,9 @@ enum class TokenType{
     CloseBrace,
     QuestionMark,
     DoubleQuotes,
+    Conditional_Op,
     Logical_Op,
+    Unary_Op,
     End_of_file,    
 };
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include <system_error>
 #include <vector>
 #include <iomanip>
@@ -90,9 +91,34 @@ namespace ast_types{
     return interpreter_functions::eval_conditional_expr(this,env);
   }
 
+
+  LogicalExpression::LogicalExpression(
+    Expression* left_exp,
+    Expression* right_exp,
+    string logical_op
+  ){
+    left = left_exp;
+    right = right_exp;
+    logical_operator = logical_op;
+    setNodeType(NodeType::Logical_Expression);
+    }
+
+  void LogicalExpression::printNode(int i){
+    cout << "Logical Expression : " <<endl;
+    Statement::indent(i);
+    cout << "Left  : " ;left->printNode(i+1);
+    Statement::indent(i);
+    cout << "Right : " ;right->printNode(i+1);
+    Statement::indent(i);
+    cout << "operator : " << logical_operator << endl; 
+  }
+
+  values::RuntimeValue* LogicalExpression::evaluate_node(environment::Environment* env){
+    return interpreter_functions::eval_logical_expr(this, env);
+  }
   NumericLiteral::NumericLiteral(string num){
     value = stoi(num);
-    setNodeType(NodeType::NumericLiteral);
+    setNodeType(NodeType::Logical_Expression);
   }
 
   void NumericLiteral::printNode(int i) {
@@ -225,7 +251,6 @@ namespace ast_types{
   }
 
   void If_Statement::printNode(int i){
-    Statement::indent(i);
     cout << "If Statement : " << endl;
     if(condition_expr != nullptr){
       Statement::indent(i+1);
@@ -240,7 +265,7 @@ namespace ast_types{
     }
     if(other_if != nullptr){
       Statement::indent(i+1);
-      cout << "Else Body : " << endl;
+      cout << "Else Body : ";
       other_if->printNode(i+2);
     } 
   }

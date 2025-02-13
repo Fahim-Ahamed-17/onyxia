@@ -13,6 +13,7 @@ namespace interpreter_functions
     values::RuntimeValue* eval_number_binary_expr(values::NumberValue* rhs,values::NumberValue* lhs,string bin_op);
     values::RuntimeValue* evaluate_identifier(ast_types::Statement* ast_node,environment::Environment* env);
     values::RuntimeValue* eval_conditional_expr(ast_types::Statement* ast_node,environment::Environment* env);
+    values::RuntimeValue* eval_logical_expr(ast_types::Statement* ast_node,environment::Environment* env);
     values::RuntimeValue* eval_numeric_conditional_expr(values::RuntimeValue* left,values::RuntimeValue* right,string conditional_op);
 
     values::RuntimeValue* eval_variable_declaration(ast_types::Statement* ast_node,environment::Environment* env);
