@@ -1,6 +1,7 @@
 #ifndef AST_H
 #define AST_H
 
+#include <stdexcept>
 #include<string>
 #include<vector>
 #include<iostream>
@@ -54,7 +55,7 @@ namespace ast_types{
           }
         }
         virtual values::RuntimeValue* evaluate_node(environment::Environment* env){
-    return new values::NullValue();
+    throw std::runtime_error("this Node hasnt been implemented" );
   };
         virtual ~Statement(){}
     };

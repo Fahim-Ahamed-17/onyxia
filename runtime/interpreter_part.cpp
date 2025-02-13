@@ -2,6 +2,7 @@
 #include "values.h"
 #include "../frontend/ast.h"
 #include "interpreter_part.h"
+#include <ios>
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
@@ -48,7 +49,7 @@ namespace interpreter_functions{
     values::RuntimeValue* eval_binary_expr(ast_types::Statement* ast_node,environment::Environment* env){
         values::NumberValue* left_number_value ; 
         values::NumberValue* right_number_value;
-        ast_types::BinaryExpression* bin_expr_ptr = dynamic_cast<ast_types::BinaryExpression*>(ast_node); 
+       ast_types::BinaryExpression* bin_expr_ptr = dynamic_cast<ast_types::BinaryExpression*>(ast_node); 
         values::RuntimeValue* left_side = bin_expr_ptr->left->evaluate_node(env);
         values::RuntimeValue* right_side = bin_expr_ptr->right->evaluate_node(env);
         if(left_side->kind == values::ValueType::Number && right_side->kind == values::ValueType::Number){
@@ -94,8 +95,27 @@ namespace interpreter_functions{
         throw std::runtime_error("'" + logical_op + "' is not defined ."); 
       }
       return new values::BooleanValue(false);// this may not be good in the future but idk and idc
-}
-  
+    }
+
+    values::RuntimeValue* eval_logical_expr(ast_types::Statement* ast_node,environment::Environment* env){
+      ast_types::LogicalExpression* logical_expr_node = dynamic_cast<ast_types::LogicalExpression*>(ast_node);
+      bool left_result =  evaluate_truthy(logical_expr_node->left,env); 
+      bool right_result = evaluate_truthy(logical_expr_node->right,env); 
+      string logical_op = logical_expr_node->logical_operator;
+      if(logical_op == "&&"){
+        if(left_result && right_result){
+          return new values::BooleanValue(true);
+        }
+        return new values::BooleanValue(false);
+      }else if(logical_op == "||"){
+        if(left_result || right_result){
+          return new values::BooleanValue(true);
+        }
+        return new values::BooleanValue(false);
+      }
+      return new values::BooleanValue(false); 
+    }
+
     values::RuntimeValue* evaluate_identifier(ast_types::Statement* ast_node,environment::Environment* env){
         ast_types::Identifier* identifier_ptr = dynamic_cast<ast_types::Identifier*>(ast_node);
         string symbol = identifier_ptr->symbol;
@@ -192,6 +212,8 @@ bool evaluate_truthy(Expression* expression,environment::Environment* env){
       }else if(condition_result->kind == values::ValueType::Number){
           numeric_value_ptr = dynamic_cast<values::NumberValue*>(condition_result);
           if(numeric_value_ptr->value == 0)return false;
+      }else if(condition_result->kind == values::ValueType::Null){
+        return false;
       }
       return true;
 }

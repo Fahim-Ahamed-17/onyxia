@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 #include <system_error>
 #include <vector>
 #include <iomanip>
@@ -113,11 +114,11 @@ namespace ast_types{
   }
 
   values::RuntimeValue* LogicalExpression::evaluate_node(environment::Environment* env){
-    return new values::NullValue();
+    return interpreter_functions::eval_logical_expr(this, env);
   }
   NumericLiteral::NumericLiteral(string num){
     value = stoi(num);
-    setNodeType(NodeType::NumericLiteral);
+    setNodeType(NodeType::Logical_Expression);
   }
 
   void NumericLiteral::printNode(int i) {
@@ -250,7 +251,6 @@ namespace ast_types{
   }
 
   void If_Statement::printNode(int i){
-    Statement::indent(i);
     cout << "If Statement : " << endl;
     if(condition_expr != nullptr){
       Statement::indent(i+1);
@@ -265,7 +265,7 @@ namespace ast_types{
     }
     if(other_if != nullptr){
       Statement::indent(i+1);
-      cout << "Else Body : " << endl;
+      cout << "Else Body : ";
       other_if->printNode(i+2);
     } 
   }
