@@ -298,6 +298,35 @@ namespace ast_types{
     return new values::Null_Interrupt_Value();
   }
 
+
+  For_Loop::For_Loop(Expression* condition_expr,Expression* increment_expr,Statement* variable_bind,vector<Statement*> body){
+    this->condition_expr = condition_expr;
+    this->index = variable_bind;
+    this->increment_expr = increment_expr;
+    this->for_loop_body = body;
+}
+
+  void For_Loop::printNode(int i){
+    cout << "For Loop : " << endl;
+    Statement::indent(i);
+    cout << "Iteration Counter : ";
+    index->printNode(i+1);
+    Statement::indent(i);
+    cout << "Condition Expression : ";
+    condition_expr->printNode(i+1);
+    cout << "Increment Expression : ";
+    increment_expr->printNode(i+1);
+    cout << "Body : " << endl;
+    for (int j =0;j < for_loop_body.size();j++){
+      Statement::indent(i+2);
+      for_loop_body[j]->printNode(i+3);
+    }
+  }
+
+  values::RuntimeValue* For_Loop::evaluate_node(environment::Environment* env){
+    return new values::NullValue();
+  }
+
   Null_Interrupt::Null_Interrupt(){
     setNodeType(NodeType::Null_Interrupt);
   }
