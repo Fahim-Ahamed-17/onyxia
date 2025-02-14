@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 #include <stack>
 #include "ast.h"
@@ -203,6 +204,34 @@ Statement* Parser::parse_while_loop(){
     return new While_Loop(condition,body);
 
 }
+
+Statement* Parser::parse_for_loop(){
+  Statement* indexing_variable_expression;
+  Expression* condition_expr;
+  Statement* increment_expr;
+
+  eat(TokenType::Open_paren);
+  if(at().value == "var") indexing_variable_expression = parse_variable_assignment();
+  else if(tokens[1].type == TokenType::Equals) indexing_variable_expression = parse_variable_assignment();
+  else if(at().type == TokenType::Identifiers && tokens[1].type == TokenType::SemiColon) {
+    indexing_variable_expression = new Identifier(eat().value);
+    eat(TokenType::SemiColon);
+  }else if(at().type == TokenType::SemiColon) indexing_variable_expression = nullptr; 
+  else throw runtime_error("Parse for Loop cannot identify the indexing variable");
+
+  if(at().type == TokenType::SemiColon) condition_expr = nullptr;
+  else condition_expr = parse_expression();
+
+  if(at().type == TokenType::Close_paren) increment_expr = nullptr;
+  else increment_expr = parse_statement();
+
+  bool isValidIncrement = true;
+  NodeType expr_type = increment_expr->type;
+
+
+
+}
+
 
 Statement* Parser::parse_break_keyword(){
   eat(TokenType::SemiColon);

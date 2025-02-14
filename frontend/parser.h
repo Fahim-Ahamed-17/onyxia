@@ -23,6 +23,7 @@ class Parser{
     ast_types::Statement* parse_variable_assignment();
     ast_types::Statement* parse_if_statement(bool isElse = false);
     ast_types::Statement* parse_while_loop();
+    ast_types::Statement* parse_for_loop();
     ast_types::Statement* parse_break_keyword(); 
 
     ast_types::Expression* parse_expression();
