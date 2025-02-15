@@ -1,3 +1,4 @@
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -87,6 +88,11 @@ void Parser::first_pass(){
           }
       }  index++;
   }
+}
+template<typename T>
+bool Parser::checkNodeType(ast_types::Statement* ast_node){
+  if(dynamic_cast<T>(ast_node)) return true;
+  else return false;
 }
 
 Statement*  Parser::parse_statement(){
@@ -200,7 +206,6 @@ Statement* Parser::parse_while_loop(){
           break;
         }
     }
-    
     return new While_Loop(condition,body);
 
 }
