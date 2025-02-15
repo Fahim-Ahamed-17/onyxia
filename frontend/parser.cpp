@@ -206,7 +206,6 @@ Statement* Parser::parse_while_loop(){
         }
     }
     return new While_Loop(condition,body);
-;
 
 }
 
