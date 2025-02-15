@@ -23,8 +23,8 @@ class Parser{
     bool checkNodeType(ast_types::Statement* ast_Node);
     
     ast_types::Statement* parse_statement();
-    ast_types::Statement* parse_variable_declaration();
-    ast_types::Statement* parse_variable_assignment();
+    ast_types::Statement* parse_variable_declaration(bool expectSemiColon = true);
+    ast_types::Statement* parse_variable_assignment(bool expectSemiColon = true);
     ast_types::Statement* parse_if_statement(bool isElse = false);
     ast_types::Statement* parse_while_loop();
     ast_types::Statement* parse_for_loop();

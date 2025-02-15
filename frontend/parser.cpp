@@ -1,3 +1,4 @@
+#include <ios>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -106,6 +107,8 @@ Statement*  Parser::parse_statement(){
             return parse_if_statement();
         }else if(kw.value == "while"){
             return parse_while_loop();
+        }else if(kw.value == "for"){
+            return parse_for_loop();
         }else if(kw.value == "break"){
             return parse_break_keyword();  
         }
@@ -118,7 +121,7 @@ Statement*  Parser::parse_statement(){
     return parse_expression();
 }
 
-Statement* Parser::parse_variable_declaration(){
+Statement* Parser::parse_variable_declaration(bool expectSemicolon){
     Token identifier = eat(TokenType::Identifiers,"dei problem");
     eat(TokenType::Colon);
     Token variable_data_type = eat(TokenType::DataType);
@@ -129,8 +132,7 @@ Statement* Parser::parse_variable_declaration(){
     }
     Token equals = eat(TokenType::Equals);
     Expression* right_expression = parse_expression(); // expression followed by the equals sign
-    eat(TokenType::SemiColon);
-
+    if(expectSemicolon) eat(TokenType::SemiColon);
     Identifier* identifier_expr = new Identifier(identifier.value);
     DataTypes data_type;
     if(variable_data_type.value == "Number"){
@@ -146,12 +148,11 @@ Statement* Parser::parse_variable_declaration(){
     return new Variable_Declaration(identifier_expr,right_expression,data_type,isNullable);
 }
 
-Statement* Parser::parse_variable_assignment(){
+Statement* Parser::parse_variable_assignment(bool expectSemicolon ){
     Token identifier = eat(TokenType::Identifiers);
     Token equals = eat(TokenType::Equals);
     Expression* right_expression = parse_expression(); // expression followed by the equals sign
-    eat(TokenType::SemiColon,"parse variable assignment");
-
+    if(expectSemicolon) eat(TokenType::SemiColon);
     Identifier* identifier_expr = new Identifier(identifier.value);
     DataTypes data_type;
     // return new Variable_Declaration(); 
@@ -214,27 +215,54 @@ Statement* Parser::parse_for_loop(){
   Statement* indexing_variable_expression;
   Expression* condition_expr;
   Statement* increment_expr;
+  vector<Statement*> body;
 
   eat(TokenType::Open_paren);
-  if(at().value == "var") indexing_variable_expression = parse_variable_assignment();
-  else if(tokens[1].type == TokenType::Equals) indexing_variable_expression = parse_variable_assignment();
+  if(at().value == "var"){ 
+    eat(TokenType::KeyWords);
+    indexing_variable_expression = parse_variable_declaration();
+  }
+  else if(at().type == TokenType::Identifiers &&tokens[1].type == TokenType::Equals) indexing_variable_expression = parse_variable_assignment();
   else if(at().type == TokenType::Identifiers && tokens[1].type == TokenType::SemiColon) {
     indexing_variable_expression = new Identifier(eat().value);
     eat(TokenType::SemiColon);
-  }else if(at().type == TokenType::SemiColon) indexing_variable_expression = nullptr; 
+  }else if(at().type == TokenType::SemiColon) {
+    indexing_variable_expression = nullptr;
+    eat(TokenType::SemiColon);
+  }
   else throw runtime_error("Parse for Loop cannot identify the indexing variable");
-
+  
   if(at().type == TokenType::SemiColon) condition_expr = nullptr;
   else condition_expr = parse_expression();
 
+  eat(TokenType::SemiColon);
+
   if(at().type == TokenType::Close_paren) increment_expr = nullptr;
+  else if(at().type == TokenType::Identifiers && tokens[1].type == TokenType::Equals){
+    increment_expr = parse_variable_assignment(false);
+  }
   else increment_expr = parse_statement();
-
+  eat(TokenType::Close_paren);
+  eat(TokenType::OpenBrace);
   bool isValidIncrement = true;
-  NodeType expr_type = increment_expr->type;
+  bool isExpression = checkNodeType<Expression*>(increment_expr);
 
+  if((!(isExpression) && increment_expr != nullptr)){
+      cout << "parse_for_loop\n";
+    if(increment_expr->type != NodeType::Variable_Assignment)
+      throw runtime_error("Not a Valid increment Expression");
+  }
+  cout << "paaarse for lop\n";
+  while (true) {
+    if(at().type == TokenType::CloseBrace){
+      eat(TokenType::CloseBrace);
+      break;
+    }
+    Statement* current_statement = parse_statement();
+    body.push_back(current_statement);
+  }
 
-
+  return new For_Loop(condition_expr,increment_expr,indexing_variable_expression,body);
 }
 
 
@@ -315,7 +343,7 @@ Expression* Parser::parse_primary_expression(){
         return expr;
     
     default:
-        throw std::runtime_error("unknown token reached during parsing" + at().value);
+        throw std::runtime_error("unknown token reached during parsing" + at().value + " " + tokens[1].value);
 
     }
 } 

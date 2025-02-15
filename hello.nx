@@ -1,12 +1,6 @@
-var x:Number? = 1;
-var y:Boolean = true;
-var z:Boolean = false;
-while(true){
-  x = x + 1;
-  if((y && 0) || (z||1)){
-    break;
-  }else if(x == 5){
-    y = false;
-  }
+var x:Number = 10;
+
+for(;;){
+  x = x+1;
 }
 x

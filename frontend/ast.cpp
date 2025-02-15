@@ -299,7 +299,7 @@ namespace ast_types{
   }
 
 
-  For_Loop::For_Loop(Expression* condition_expr,Expression* increment_expr,Statement* variable_bind,vector<Statement*> body){
+  For_Loop::For_Loop(Expression* condition_expr,Statement* increment_expr,Statement* variable_bind,vector<Statement*> body){
     this->condition_expr = condition_expr;
     this->index = variable_bind;
     this->increment_expr = increment_expr;
@@ -310,12 +310,17 @@ namespace ast_types{
     cout << "For Loop : " << endl;
     Statement::indent(i);
     cout << "Iteration Counter : ";
-    index->printNode(i+1);
+    if(index) index->printNode(i+1);
+    else cout << "null\n"; 
     Statement::indent(i);
     cout << "Condition Expression : ";
-    condition_expr->printNode(i+1);
+    if(condition_expr) condition_expr->printNode(i+1);
+    else cout << "null\n"; 
+    Statement::indent(i);
     cout << "Increment Expression : ";
-    increment_expr->printNode(i+1);
+    if(increment_expr)increment_expr->printNode(i+1);
+    else cout << "null\n"; 
+    Statement::indent(i);
     cout << "Body : " << endl;
     for (int j =0;j < for_loop_body.size();j++){
       Statement::indent(i+2);

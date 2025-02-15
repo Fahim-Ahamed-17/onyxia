@@ -8,8 +8,8 @@
 using namespace std;
 
   string Token::isKeyword(string word){ 
-    int number_of_keywords = 6;
-    string reserved_KeyWords[] = {"if","let","var","else","while","break"};// change the number
+    int number_of_keywords = 7;
+    string reserved_KeyWords[] = {"if","let","var","else","while","for","break"};// change the number
     for(int i = 0;i < number_of_keywords;i++){
       if(reserved_KeyWords[i] == word){
         return reserved_KeyWords[i];

@@ -233,14 +233,14 @@ namespace ast_types{
     public:
       
       For_Loop(Expression* condition_expression,
-        Expression* increment_expr,
+        Statement* increment_expr,
         Statement* index_statement,
         vector<Statement*> body
       );
 
       Expression* condition_expr;
       Statement* index;// basically the variable used as the index "int i = 0" in cpp
-      Expression* increment_expr ;// the "i++" part in c and cpp for loop
+      Statement* increment_expr ;// the "i++" part in c and cpp for loop
       vector<Statement*> for_loop_body;
 
       void printNode(int i) override;
