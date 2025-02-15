@@ -18,6 +18,10 @@ class Parser{
     Token eat(string expected,string error);
     Token eat(TokenType tk,string error);
     void first_pass();
+    
+    template<typename T>
+    bool checkNodeType(ast_types::Statement* ast_Node);
+    
     ast_types::Statement* parse_statement();
     ast_types::Statement* parse_variable_declaration();
     ast_types::Statement* parse_variable_assignment();
