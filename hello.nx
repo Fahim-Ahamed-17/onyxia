@@ -1,6 +1,7 @@
 var x:Number? = 1;
 var y:Boolean = true;
 var z:Boolean = false;
+var a:Number = 9;
 while(true){
   x = x + 1;
   if((y && 0) || (z||1)){
