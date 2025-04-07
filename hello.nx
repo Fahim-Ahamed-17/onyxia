@@ -1,4 +1,4 @@
-ar vec:Number? = 1;
+var x:Number? = 1;
 var y:Boolean = true;
 var z:Boolean = false;
 while(true){
